@@ -1,33 +1,72 @@
-export default function WeatherCard({ weather }) {
-  const { name, sys, weather: w, main } = weather;
-  const icon = w[0].icon;
-  const desc = w[0].description;
+import { HazeIcon, Skyline, SunWeatherIcon } from "./Icons";
 
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("en-IN", {
-    weekday: "long", day: "numeric", month: "long", year: "numeric",
+function ConditionIcon({ description }) {
+  const d = description?.toLowerCase() ?? "";
+  if (d.includes("haze") || d.includes("mist") || d.includes("fog")) {
+    return <HazeIcon />;
+  }
+  return <SunWeatherIcon size={28} />;
+}
+
+export default function WeatherCard({ weather }) {
+  const { name, sys, weather: w, main, timezone } = weather;
+  const desc = w[0].description;
+  const iconCode = w[0].icon;
+  const location = sys?.country
+    ? `${name}, ${getCountryName(sys.country)}`
+    : name;
+
+  const localTime = new Date(Date.now() + (timezone ?? 0) * 1000);
+  const dateStr = localTime.toLocaleDateString("en-IN", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const timeStr = localTime.toLocaleTimeString("en-IN", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
   });
 
   return (
-    <div className="glass-card">
-      <div className="weather-main">
-        <div className="weather-left">
-          <div className="city-name">{name}</div>
-          <div className="country"> Updated just now</div>
-          <div className="description">{desc}</div>
-          <div className="date-time">{dateStr}</div>
+    <div className="hero-card">
+      <div className="hero-content">
+        <div className="hero-left">
+          <h2 className="hero-city">{name}</h2>
+          <p className="hero-location">{location}</p>
+          <p className="hero-date">{dateStr}</p>
+          <p className="hero-time">{timeStr}</p>
+          <div className="hero-condition">
+            <ConditionIcon description={desc} />
+            <span className="hero-condition-text">{desc}</span>
+          </div>
         </div>
 
-        <div className="weather-right">
-          <img
-            className="weather-icon-img"
-            src={`https://openweathermap.org/img/wn/${icon}@2x.png`}
-            alt={desc}
-          />
-          <div className="temp-main">{Math.round(main.temp)}°C</div>
-          <div className="temp-feels">Feels like temperature {Math.round(main.feels_like)}°C</div>
+        <div className="hero-right">
+          {iconCode.endsWith("d") || iconCode.endsWith("n") ? (
+            <img
+              className="hero-weather-img"
+              src={`https://openweathermap.org/img/wn/${iconCode}@2x.png`}
+              alt={desc}
+            />
+          ) : (
+            <SunWeatherIcon size={72} />
+          )}
+          <div className="hero-temp">{Math.round(main.temp)}°C</div>
+          <p className="hero-feels">Feels like {Math.round(main.feels_like)}°C</p>
         </div>
       </div>
+      <Skyline />
     </div>
   );
+}
+
+function getCountryName(code) {
+  try {
+    const region = new Intl.DisplayNames(["en"], { type: "region" });
+    return region.of(code) ?? code;
+  } catch {
+    return code;
+  }
 }

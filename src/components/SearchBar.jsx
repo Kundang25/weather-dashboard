@@ -1,43 +1,72 @@
-import { useState } from "react";
+import { SearchIcon } from "./Icons";
 
-const QUICK_CITIES = ["Delhi", "Mumbai", "London", "New York", "Tokyo", "Dubai", "Paris", "Sydney"];
+const QUICK_CITIES = [
+  "Delhi",
+  "Mumbai",
+  "Bengaluru",
+  "Chennai",
+  "Kolkata",
+  "Hyderabad",
+  "Pune",
+];
 
-export default function SearchBar({ onSearch, loading }) {
-  const [input, setInput] = useState("");
-
+export default function SearchBar({
+  onSearch,
+  loading,
+  value,
+  onValueChange,
+}) {
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (input.trim()) onSearch(input.trim());
+    if (value.trim()) onSearch(value.trim());
   };
 
   const handleChip = (city) => {
-    setInput(city);
+    onValueChange(city);
     onSearch(city);
   };
 
   return (
-    <div className="search-wrapper">
+    <section className="search-section">
       <form onSubmit={handleSubmit} className="search-row">
-        <input
-          className="search-input"
-          type="text"
-          placeholder="Search for a city..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          disabled={loading}
-        />
-        <button className="search-btn" type="submit" disabled={loading || !input.trim()}>
-          {loading ? "Loading…" : "Check Weather"}
+        <div className="search-input-wrap">
+          <span className="search-input-icon">
+            <SearchIcon />
+          </span>
+          <input
+            className="search-input"
+            type="text"
+            placeholder="Search city..."
+            value={value}
+            onChange={(e) => onValueChange(e.target.value)}
+            disabled={loading}
+          />
+        </div>
+        <button
+          className="search-btn"
+          type="submit"
+          disabled={loading || !value.trim()}
+        >
+          {loading ? "Searching…" : "Search"}
         </button>
       </form>
 
-      <div className="quick-cities">
-        {QUICK_CITIES.map((city) => (
-          <button key={city} className="city-chip" onClick={() => handleChip(city)} type="button">
-            {city}
-          </button>
-        ))}
+      <div className="popular-cities">
+        <span className="popular-label">Popular cities:</span>
+        <div className="city-pills">
+          {QUICK_CITIES.map((city) => (
+            <button
+              key={city}
+              className="city-pill"
+              onClick={() => handleChip(city)}
+              type="button"
+              disabled={loading}
+            >
+              {city}
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
