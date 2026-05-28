@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { HazeIcon, Skyline, SunWeatherIcon } from "./Icons";
 
 function ConditionIcon({ description }) {
@@ -12,11 +13,20 @@ export default function WeatherCard({ weather }) {
   const { name, sys, weather: w, main, timezone } = weather;
   const desc = w[0].description;
   const iconCode = w[0].icon;
+  const [currentMs, setCurrentMs] = useState(() => Date.now());
   const location = sys?.country
     ? `${name}, ${getCountryName(sys.country)}`
     : name;
 
-  const nowUtcMs = Date.now() + new Date().getTimezoneOffset() * 60000;
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setCurrentMs(Date.now());
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const nowUtcMs = currentMs + new Date().getTimezoneOffset() * 60000;
   const localTime = new Date(nowUtcMs + (timezone ?? 0) * 1000);
   const dateStr = localTime.toLocaleDateString("en-IN", {
     weekday: "long",
@@ -25,13 +35,6 @@ export default function WeatherCard({ weather }) {
     year: "numeric",
     timeZone: "UTC",
   });
-  const timeStr = localTime.toLocaleTimeString("en-IN", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "UTC",
-  });
-
   return (
     <div className="hero-card">
       <div className="hero-content">
@@ -39,7 +42,6 @@ export default function WeatherCard({ weather }) {
           <h2 className="hero-city">{name}</h2>
           <p className="hero-location">{location}</p>
           <p className="hero-date">{dateStr}</p>
-          <p className="hero-time">{timeStr}</p>
           <div className="hero-condition">
             <ConditionIcon description={desc} />
             <span className="hero-condition-text">{desc}</span>
