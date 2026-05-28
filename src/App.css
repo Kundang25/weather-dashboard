@@ -20,6 +20,24 @@
   --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.08);
   --radius: 14px;
   --radius-pill: 999px;
+  --hero-bg: linear-gradient(160deg, #bfdbfe 0%, #dbeafe 45%, #e0f2fe 100%);
+  --divider: #f1f5f9;
+}
+
+:root[data-theme="dark"] {
+  --bg-page: #0f172a;
+  --bg-card: #111827;
+  --blue-primary: #60a5fa;
+  --blue-hover: #3b82f6;
+  --blue-light: rgba(96, 165, 250, 0.16);
+  --text-dark: #e2e8f0;
+  --text-body: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border: #1f2937;
+  --shadow-sm: 0 1px 3px rgba(2, 6, 23, 0.45), 0 1px 2px rgba(2, 6, 23, 0.3);
+  --shadow-md: 0 8px 20px rgba(2, 6, 23, 0.4);
+  --hero-bg: linear-gradient(160deg, #1e293b 0%, #0f172a 45%, #111827 100%);
+  --divider: #1e293b;
 }
 
 body {
@@ -189,7 +207,7 @@ body {
 
 .search-input:focus {
   border-color: var(--blue-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue-primary) 22%, transparent);
 }
 
 .search-btn {
@@ -321,7 +339,7 @@ body {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  background: linear-gradient(160deg, #bfdbfe 0%, #dbeafe 45%, #e0f2fe 100%);
+  background: var(--hero-bg);
   box-shadow: var(--shadow-md);
   min-height: 220px;
 }
@@ -474,7 +492,7 @@ body {
   align-items: center;
   gap: 10px;
   padding: 11px 4px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--divider);
   font-size: 0.875rem;
 }
 
@@ -508,7 +526,7 @@ body {
   align-items: center;
   gap: 10px;
   padding: 10px 4px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--divider);
 }
 
 .forecast-row-item:last-child {

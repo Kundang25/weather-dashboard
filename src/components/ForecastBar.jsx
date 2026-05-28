@@ -1,5 +1,6 @@
 export default function ForecastBar({ forecast }) {
   const daily = {};
+  const cityTimezone = forecast?.city?.timezone ?? 0;
 
   forecast.list.forEach((item) => {
     const date = new Date(item.dt * 1000);
@@ -22,11 +23,15 @@ export default function ForecastBar({ forecast }) {
       <h3 className="panel-title">5-Day Forecast</h3>
       <ul className="forecast-list">
         {days.map((item) => {
-          const date = new Date(item.dt * 1000);
-          const day = date.toLocaleDateString("en-IN", { weekday: "short" });
+          const date = new Date((item.dt + cityTimezone) * 1000);
+          const day = date.toLocaleDateString("en-IN", {
+            weekday: "short",
+            timeZone: "UTC",
+          });
           const dateLabel = date.toLocaleDateString("en-IN", {
             day: "numeric",
             month: "short",
+            timeZone: "UTC",
           });
 
           return (

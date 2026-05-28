@@ -16,17 +16,20 @@ export default function WeatherCard({ weather }) {
     ? `${name}, ${getCountryName(sys.country)}`
     : name;
 
-  const localTime = new Date(Date.now() + (timezone ?? 0) * 1000);
+  const nowUtcMs = Date.now() + new Date().getTimezoneOffset() * 60000;
+  const localTime = new Date(nowUtcMs + (timezone ?? 0) * 1000);
   const dateStr = localTime.toLocaleDateString("en-IN", {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
+    timeZone: "UTC",
   });
   const timeStr = localTime.toLocaleTimeString("en-IN", {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
+    timeZone: "UTC",
   });
 
   return (

@@ -4,7 +4,12 @@ import WeatherCard from "./components/WeatherCard";
 import WeatherStats from "./components/WeatherStats";
 import TodayAtGlance from "./components/TodayAtGlance";
 import ForecastBar from "./components/ForecastBar";
-import { LogoIcon, SunToggleIcon, LocationIcon } from "./components/Icons";
+import {
+  LogoIcon,
+  SunToggleIcon,
+  MoonToggleIcon,
+  LocationIcon,
+} from "./components/Icons";
 import {
   fetchWeather,
   fetchForecast,
@@ -34,6 +39,19 @@ export default function App() {
   const [locating, setLocating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isMyLocation, setIsMyLocation] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") return "light";
+    const saved = window.localStorage.getItem("weather-theme");
+    if (saved === "light" || saved === "dark") return saved;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    window.localStorage.setItem("weather-theme", theme);
+  }, [theme]);
 
   const applyWeather = useCallback((weatherData, forecastData, queryLabel) => {
     setWeather(weatherData);
@@ -133,6 +151,10 @@ export default function App() {
     loadWeatherByCity(city);
   };
 
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
+
   return (
     <div className="app">
       <div className="page">
@@ -145,8 +167,13 @@ export default function App() {
             </div>
           </div>
           <div className="header-actions">
-            <button type="button" className="icon-btn" aria-label="Theme">
-              <SunToggleIcon />
+            <button
+              type="button"
+              className="icon-btn"
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              onClick={toggleTheme}
+            >
+              {theme === "dark" ? <SunToggleIcon /> : <MoonToggleIcon />}
             </button>
             <button
               type="button"
